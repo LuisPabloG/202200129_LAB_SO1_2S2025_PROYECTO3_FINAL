@@ -23,7 +23,11 @@ cat > testdata_source.json << EOL
 }
 EOL
 
-curl -X POST -H "Content-Type: application/json" -d @testdata_source.json ${GRAFANA_API}/datasources -u admin:admin
+# Intentar con varias opciones de autenticación
+echo "Intentando crear la fuente de datos..."
+curl -X POST -H "Content-Type: application/json" -d @testdata_source.json ${GRAFANA_API}/datasources -u admin:admin || \
+curl -X POST -H "Content-Type: application/json" -d @testdata_source.json ${GRAFANA_API}/datasources || \
+echo "No se pudo crear la fuente de datos, continuando con la creación del dashboard..."
 
 # Crear un panel de prueba con datos del clima de chinautla
 echo "Creando dashboard del clima..."
@@ -226,7 +230,10 @@ cat > weather_dashboard.json << EOL
 EOL
 
 echo "Publicando dashboard..."
-curl -X POST -H "Content-Type: application/json" -d @weather_dashboard.json ${GRAFANA_API}/dashboards/db -u admin:admin
+# Intentar con varias opciones de autenticación
+curl -X POST -H "Content-Type: application/json" -d @weather_dashboard.json ${GRAFANA_API}/dashboards/db -u admin:admin || \
+curl -X POST -H "Content-Type: application/json" -d @weather_dashboard.json ${GRAFANA_API}/dashboards/db || \
+echo "No se pudo publicar el dashboard directamente. Intenta importarlo manualmente desde la interfaz de Grafana."
 
 echo ""
 echo "==================================="
