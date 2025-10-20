@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ejecutar localmente para enviar tráfico
-INGRESS_IP=$(kubectl get svc -n ingress-nginx ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+INGRESS_IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 INGRESS_PORT="80"
 
 echo "Enviando peticiones de prueba al sistema..."
