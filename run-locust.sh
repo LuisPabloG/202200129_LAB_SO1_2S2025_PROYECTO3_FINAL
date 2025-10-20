@@ -6,6 +6,8 @@
 # Variables de configuración
 INGRESS_IP="104.198.150.238"  # Reemplaza con la IP de tu Ingress
 LOCUST_FILE="locustfile.py"
+PORT="8089"
+WEB_HOST="0.0.0.0"  # Importante para Cloud Shell
 
 echo "=== Iniciando Locust para generar tráfico de prueba ==="
 echo "IP del Ingress: $INGRESS_IP"
@@ -23,12 +25,32 @@ if ! command -v locust &> /dev/null; then
     pip install locust
 fi
 
-# Iniciar Locust
-echo "✅ Iniciando Locust..."
-echo "   Accede a la interfaz web en: http://localhost:8089"
+# Detectar si estamos en Cloud Shell
+IS_CLOUDSHELL=false
+if [ -n "$CLOUD_SHELL" ] || [ -f /google/devshell/bashrc.google ]; then
+    IS_CLOUDSHELL=true
+fi
+
+# Configuración específica para Cloud Shell
+if [ "$IS_CLOUDSHELL" = true ]; then
+    echo "✅ Detectado entorno Cloud Shell"
+    echo ""
+    echo "Para acceder a la interfaz web de Locust en Cloud Shell:"
+    echo "1. Haz clic en el botón 'Web Preview' en la parte superior derecha"
+    echo "2. Selecciona 'Preview on port 8089' o 'Change port' y pon 8089"
+    echo ""
+    echo "O accede directamente a esta URL:"
+    echo "https://ssh.cloud.google.com/devshell/proxy?port=8089&scope=serverless"
+    echo ""
+else
+    echo "✅ Iniciando Locust en entorno local..."
+    echo "   Accede a la interfaz web en: http://localhost:$PORT"
+fi
+
 echo "   Configura:"
 echo "     - Número de usuarios: 10"
 echo "     - Tasa de generación: 10 usuarios por segundo"
 echo "     - Total de peticiones: 10,000"
 
-locust -f "$LOCUST_FILE" --host="http://$INGRESS_IP"
+# Iniciar Locust con parámetros para permitir acceso externo
+locust -f "$LOCUST_FILE" --host="http://$INGRESS_IP" --web-host="$WEB_HOST" --web-port="$PORT"
