@@ -12,6 +12,15 @@ Ejecuta el script para actualizar las rutas de imágenes privadas a públicas:
 ./fix-image-issues.sh
 ```
 
+## Usa imágenes públicas alternativas
+Si tienes problemas con ImagePullBackOff, puedes editar manualmente los archivos YAML en la carpeta k8s/ para usar imágenes públicas alternativas:
+
+- Para servicios Go: `golang:1.21` 
+- Para API Rust: `rust:1.72`
+- Para Kafka: `bitnami/kafka:latest`
+- Para RabbitMQ: `rabbitmq:3.12-management`
+- Para Valkey: `valkey/valkey:7.2.0`
+
 ## Despliega la aplicación
 1. Verifica que estás conectado al cluster:
 ```bash
@@ -50,6 +59,12 @@ Credenciales:
 
 ## Solución de Problemas
 
+### Usa el script de solución de problemas
+Ejecuta el script que reinicia automáticamente todos los deployments:
+```bash
+./fix-deployment.sh
+```
+
 ### Si algún pod sigue en ImagePullBackOff
 ```bash
 kubectl describe pod <nombre-del-pod> -n sopes3
@@ -64,6 +79,21 @@ kubectl rollout restart deployment <nombre-deployment> -n sopes3
 ```bash
 kubectl delete -f ./k8s/0-namespaces.yaml
 ./deploy-k8s.sh
+```
+
+### Si necesitas utilizar imágenes públicas
+Si continúas teniendo problemas con las imágenes, puedes crear manualmente un despliegue usando estas imágenes públicas:
+
+```bash
+# Desplegar solo los servicios principales
+kubectl apply -f ./k8s/0-namespaces.yaml
+kubectl apply -f ./k8s/1-nginx-ingress.yaml
+kubectl apply -f ./k8s/5-kafka.yaml
+kubectl apply -f ./k8s/7-valkey.yaml
+kubectl apply -f ./k8s/9-grafana.yaml
+kubectl apply -f ./k8s/9.1-grafana-datasource.yaml
+kubectl apply -f ./k8s/9.2-grafana-dashboard.yaml
+kubectl apply -f ./k8s/10-ingress.yaml
 ```
 
 ## Verificación de Logs
