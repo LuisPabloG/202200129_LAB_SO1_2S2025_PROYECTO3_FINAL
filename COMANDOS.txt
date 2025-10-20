@@ -1,1 +1,17 @@
-gcloud compute ssh zot-registry-vm --zone=us-central1-c
+sopes3-final
+Status
+Running
+Mode
+Standard
+Number of nodes
+3
+Control plane zone
+us-central1-c
+Endpoint
+107.178.210.190
+
+gcloud compute ssh lpvvs2013@zot-vm --zone us-central1-c --project proyecto-3-475405
+
+gcloud compute instances list
+
+
