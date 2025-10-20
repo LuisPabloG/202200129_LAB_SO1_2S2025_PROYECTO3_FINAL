@@ -18,6 +18,13 @@ gcloud compute instances list
 http://35.188.135.27:3000/login
 http://104.198.150.238:3000 (Instancia optimizada para acceso externo)
 
+# Comandos para Locust
+chmod +x run-locust-cloudshell.sh
+./run-locust-cloudshell.sh
+# Acceso a Locust: http://0.0.0.0:8089 o usando Web Preview en Cloud Shell
 
-
-http://104.198.150.238:3000
+# Configuración de Dashboard en Grafana
+# 1. Acceder a: http://104.198.150.238:3000
+# 2. Usuario: admin
+# 3. Contraseña: admin 
+# 4. Importar dashboard: dashboard-grafana.json
