@@ -14,4 +14,10 @@ gcloud compute ssh lpvvs2013@zot-vm --zone us-central1-c --project proyecto-3-47
 
 gcloud compute instances list
 
+# URLs de Grafana
+http://35.188.135.27:3000/login
+http://104.198.150.238:3000 (Instancia optimizada para acceso externo)
 
+
+
+http://104.198.150.238:3000
