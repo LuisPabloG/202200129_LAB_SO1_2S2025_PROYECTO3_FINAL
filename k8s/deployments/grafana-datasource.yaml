@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: sopes3
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+    - name: Valkey
+      type: redis-datasource
+      access: proxy
+      url: valkey-service:6379
+      isDefault: true
+      editable: true

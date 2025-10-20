@@ -1,0 +1,1 @@
+gcloud compute ssh zot-registry-vm --zone=us-central1-c
