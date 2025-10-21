@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-writer
+  namespace: proyecto3
+spec:
+  replicas: 1  # Se probará con 1 y 2 réplicas
+  selector:
+    matchLabels:
+      app: kafka-writer
+  template:
+    metadata:
+      labels:
+        app: kafka-writer
+    spec:
+      containers:
+      - name: kafka-writer
+        image: 34.31.7.251:5000/kafka-writer:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 50051
+        env:
+        - name: PORT
+          value: "50051"
+        - name: KAFKA_BROKERS
+          value: "kafka-service:9092"
+        - name: KAFKA_TOPIC
+          value: "weather-tweets"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-writer-service
+  namespace: proyecto3
+spec:
+  selector:
+    app: kafka-writer
+  ports:
+  - port: 50051
+    targetPort: 50051
+  type: ClusterIP
