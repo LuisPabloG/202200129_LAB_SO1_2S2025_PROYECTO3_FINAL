@@ -2,23 +2,34 @@ FROM golang:1.18-alpine AS builder
 
 WORKDIR /app
 
-COPY go.mod ./
-RUN go mod download
+# Instalar dependencias necesarias
+RUN apk add --no-cache git build-base
 
+# Copiar los archivos de módulos
+COPY go.mod go.sum* ./
+RUN if [ -f go.sum ]; then go mod download; fi
+
+# Copiar código fuente
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -o rabbit-consumer .
+# Si no existe go.sum, hacer tidy
+RUN if [ ! -f go.sum ]; then go mod tidy; fi
 
-FROM alpine:latest  
+# Construir la aplicación
+RUN CGO_ENABLED=1 GOOS=linux go build -a -o rabbitmq-consumer .
+
+FROM alpine:latest
+
+RUN apk add --no-cache ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /app/rabbit-consumer .
+COPY --from=builder /app/rabbitmq-consumer .
 
-ENV RABBIT_URL=amqp://guest:guest@rabbitmq:5672/
-ENV RABBIT_QUEUE=weather-tweets
+ENV RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+ENV RABBITMQ_QUEUE=weather-tweets
 ENV REDIS_ADDR=valkey:6379
-ENV REDIS_PASSWORD=
+ENV REDIS_PASSWORD=""
 ENV REDIS_DB=0
 
-CMD ["./rabbit-consumer"]
+CMD ["./rabbitmq-consumer"]

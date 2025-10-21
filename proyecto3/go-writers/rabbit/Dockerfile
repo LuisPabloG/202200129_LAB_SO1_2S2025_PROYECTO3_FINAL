@@ -2,11 +2,20 @@ FROM golang:1.18-alpine AS builder
 
 WORKDIR /app
 
-COPY go.mod ./
-RUN go mod download
+# Instalar dependencias necesarias
+RUN apk add --no-cache git
 
+# Copiar los archivos de módulos
+COPY go.mod go.sum* ./
+RUN if [ -f go.sum ]; then go mod download; fi
+
+# Copiar código fuente
 COPY . .
 
+# Si no existe go.sum, hacer tidy
+RUN if [ ! -f go.sum ]; then go mod tidy; fi
+
+# Construir la aplicación
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o rabbit-writer .
 
 FROM alpine:latest  
