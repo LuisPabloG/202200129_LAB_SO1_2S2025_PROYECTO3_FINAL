@@ -1,8 +1,16 @@
 FROM rust:1.70 as builder
 
 WORKDIR /usr/src/rust-api
-COPY . .
+COPY Cargo.toml Cargo.lock* ./
 
+# Creamos un src vacío para pre-descargar dependencias
+RUN mkdir -p src && \
+    echo "fn main() {println!(\"dummy\");}" > src/main.rs && \
+    cargo build --release
+
+# Ahora copiamos el código real y compilamos de nuevo
+# Cargo usará la caché para las dependencias que no cambiaron
+COPY . .
 RUN cargo build --release
 
 FROM debian:bullseye-slim
